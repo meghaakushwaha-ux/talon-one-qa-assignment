@@ -6,7 +6,7 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "cy:run:auth": "cypress run --spec 'cypress/e2e/auth/**/*.cy.js'",
+    "cy:run:auth": "cypress run --spec 'cypress/e2e/authentication/**/*.cy.js'",
     "cy:run:purchase": "cypress run --spec 'cypress/e2e/purchase/**/*.cy.js'",
     "report:merge": "mochawesome-merge mochawesome-report/*.json -o mochawesome-report/report.json",
     "report:generate": "marge mochawesome-report/report.json --reportDir mochawesome-report --inline",

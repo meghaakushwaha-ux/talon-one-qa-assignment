@@ -1,0 +1,12 @@
+{
+    "checkout": {
+        "name": "Megha Kushwaha",
+        "country": "Germany",
+        "city": "Berlin",
+        "creditCard": "1111111111111111",
+        "month": "11",
+        "year": "2026"
+    },
+    "laptop": "Sony vaio i5",
+    "password": "Test@1234"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "demoblaze-cypress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:auth": "cypress run --spec 'cypress/e2e/auth/**/*.cy.js'",
+    "cy:run:purchase": "cypress run --spec 'cypress/e2e/purchase/**/*.cy.js'",
+    "report:merge": "mochawesome-merge mochawesome-report/*.json -o mochawesome-report/report.json",
+    "report:generate": "marge mochawesome-report/report.json --reportDir mochawesome-report --inline",
+    "report": "npm run report:merge && npm run report:generate",
+    "lint": "eslint cypress/**/*.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "cypress": "^15.17.0",
+    "cypress-multi-reporters": "^2.0.5",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-cypress": "^6.4.1",
+    "eslint-plugin-prettier": "^5.5.6",
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
+    "prettier": "^3.8.4"
+  }
+}

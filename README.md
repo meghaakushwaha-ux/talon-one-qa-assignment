@@ -20,6 +20,7 @@ Install dependencies
 
    ```bash
    npm install
+   npx cypress install
    ```
 
 ## Running the tests

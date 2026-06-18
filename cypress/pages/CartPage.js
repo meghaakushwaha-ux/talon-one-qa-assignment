@@ -1,19 +1,27 @@
 class CartPage {
-  itemList() {
+  items() {
     return cy.get('#tbodyid tr');
   }
 
+  total() {
+    return cy.get('#totalp');
+  }
+
   containsItem(name) {
-    cy.get('#tbodyid').should('contain', name);
+    return cy.get('#tbodyid').should('contain', name);
+  }
+
+  deleteItem(name) {
+    cy.contains('#tbodyid tr', name).find('td:last-child a').click();
+    cy.contains('#tbodyid tr', name).should('not.exist');
   }
 
   placeOrder() {
     cy.contains('button', 'Place Order').click();
-    cy.wait(500);
     cy.get('#orderModal').should('be.visible');
   }
 
-  fillOrderDetails({ name, country, city, card, month, year }) {
+  fillOrder({ name, country, city, card, month, year }) {
     cy.get('#name').type(name);
     cy.get('#country').type(country);
     cy.get('#city').type(city);
@@ -26,7 +34,7 @@ class CartPage {
     cy.contains('button', 'Purchase').click();
   }
 
-  successMessageIsShown() {
+  successMessage() {
     return cy.get('.sweet-alert h2');
   }
 
@@ -34,8 +42,8 @@ class CartPage {
     return cy.get('.sweet-alert p.lead');
   }
 
-  dismissSuccessMessage() {
-    return cy.get('.sweet-alert .confirm').click();
+  dismissSuccess() {
+    cy.get('.sweet-alert .confirm').click();
   }
 }
 

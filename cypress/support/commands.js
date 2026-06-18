@@ -14,14 +14,10 @@ Cypress.Commands.add('login', (username, password) => {
     url: `${Cypress.env('apiUrl')}/login`,
     body: { username, password: btoa(password) },
     headers: { 'Content-Type': 'application/json' },
-    failOnStatusCode: false,
   }).then(({ body }) => {
     const authToken = body.replace('Auth_token: ', '');
     cy.setCookie('tokenp_', authToken);
   });
-
-  cy.intercept('POST', '**/check').as('checkRequest');
   cy.visit('/');
-  cy.wait('@checkRequest', { timeout: 10000 });
-  cy.get('#nameofuser', { timeout: 10000 }).should('be.visible');
+  cy.get('#nameofuser', { timeout: 15000 }).should('be.visible');
 });

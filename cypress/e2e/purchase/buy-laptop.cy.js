@@ -22,56 +22,50 @@ describe('Laptop Purchase Flow', { testIsolation: false }, () => {
 
   it('test the cart is empty for a new account', () => {
     homePage.goToCart();
-    cartPage.itemList().should('have.length', 0);
+    cartPage.items().should('have.length', 0);
   });
 
   it('test a laptop is added to cart', () => {
     homePage.navigateToCategoryList('Laptops');
     homePage.selectRequiredProduct(testData.laptop);
+    productPage.getPrice().should('contain', testData.laptopPrice);
 
-    cy.on('window:alert', (alertText) => {
-      expect(alertText).to.equal('Product added.');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('cartAlert'));
     productPage.addToCart();
-    cy.wait(1500);
+    cy.get('@cartAlert').should('have.been.calledWith', 'Product added.');
 
     homePage.goToCart();
     cartPage.containsItem(testData.laptop);
+    cartPage.total().should('contain', testData.laptopPrice);
+    cartPage.deleteItem(testData.laptop);
   });
 
   it('test order form when it is submitted without name and credit card', () => {
     homePage.goToCart();
     cartPage.placeOrder();
 
-    let alertMessage = '';
-    cy.on('window:alert', (message) => {
-      alertMessage = message;
-    });
-
+    cy.window().then((win) => cy.stub(win, 'alert').as('formAlert'));
     cartPage.confirmPurchase();
-
-    cy.wait(1500).then(() => {
-      expect(alertMessage).to.equal('Please fill out Name and Creditcard.');
-    });
+    cy.get('@formAlert').should('have.been.calledWith', 'Please fill out Name and Creditcard.');
   });
 
   it('test full laptop purchase flow', () => {
     homePage.navigateToCategoryList('Laptops');
     homePage.selectRequiredProduct(testData.laptop);
     productPage.getName().should('contain', testData.laptop);
+    productPage.getPrice().should('contain', testData.laptopPrice);
 
-    cy.on('window:alert', (alertText) => {
-      expect(alertText).to.equal('Product added.');
-    });
+    cy.window().then((win) => cy.stub(win, 'alert').as('cartAlert'));
     productPage.addToCart();
-    cy.wait(1500);
+    cy.get('@cartAlert').should('have.been.calledWith', 'Product added.');
 
     homePage.goToCart();
-    cartPage.itemList().should('have.length.greaterThan', 0);
+    cartPage.items().should('have.length.greaterThan', 0);
     cartPage.containsItem(testData.laptop);
+    cartPage.total().should('contain', testData.laptopPrice);
 
     cartPage.placeOrder();
-    cartPage.fillOrderDetails({
+    cartPage.fillOrder({
       name: testData.checkout.name,
       country: testData.checkout.country,
       city: testData.checkout.city,
@@ -79,9 +73,11 @@ describe('Laptop Purchase Flow', { testIsolation: false }, () => {
       month: testData.checkout.month,
       year: testData.checkout.year,
     });
+
     cartPage.confirmPurchase();
-    cartPage.successMessageIsShown().should('contain', 'Thank you for your purchase!');
+    cartPage.successMessage().should('contain', 'Thank you for your purchase!');
     cartPage.orderDetails().should('contain', testData.checkout.name);
-    cartPage.dismissSuccessMessage();
+    cartPage.orderDetails().should('contain', `Amount: ${testData.laptopPrice} USD`);
+    cartPage.dismissSuccess();
   });
 });

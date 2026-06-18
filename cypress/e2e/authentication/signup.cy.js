@@ -16,71 +16,43 @@ describe('Sign Up', () => {
   });
 
   it('test user registers successfully with a new username', () => {
-    const username = `testuser_${Date.now()}`;
-    let alert = '';
-    cy.on('window:alert', (message) => {
-      alert = message;
-    });
-
-    signupPage.fillUsername(username);
+    cy.window().then((win) => cy.stub(win, 'alert').as('alert'));
+    signupPage.fillUsername(`testuser_s${Date.now()}`);
     signupPage.fillPassword(testData.password);
     signupPage.submitForm();
-
-    cy.wait(2000).then(() => {
-      expect(alert).to.equal('Sign up successful.');
-    });
+    cy.get('@alert').should('have.been.calledWith', 'Sign up successful.');
   });
 
   it('test duplicate username is rejected', () => {
     const existing = 'existinguser123';
 
+    cy.window().then((win) => cy.stub(win, 'alert').as('firstAlert'));
     signupPage.fillUsername(existing);
     signupPage.fillPassword(testData.password);
     signupPage.submitForm();
-    cy.wait(1500);
+    cy.get('@firstAlert').should('have.been.called');
 
     homePage.visit();
     homePage.openSignupForm();
 
-    let alert = '';
-    cy.on('window:alert', (message) => {
-      alert = message;
-    });
-
+    cy.window().then((win) => cy.stub(win, 'alert').as('dupAlert'));
     signupPage.fillUsername(existing);
     signupPage.fillPassword(testData.password);
     signupPage.submitForm();
-
-    cy.wait(2000).then(() => {
-      expect(alert).to.equal('This user already exist.');
-    });
+    cy.get('@dupAlert').should('have.been.calledWith', 'This user already exist.');
   });
 
   it('test signup form rejects when username is empty', () => {
-    let alert = '';
-    cy.on('window:alert', (message) => {
-      alert = message;
-    });
-
+    cy.window().then((win) => cy.stub(win, 'alert').as('alert'));
     signupPage.fillPassword(testData.password);
     signupPage.submitForm();
-
-    cy.wait(1500).then(() => {
-      expect(alert).to.equal('Please fill out Username and Password.');
-    });
+    cy.get('@alert').should('have.been.calledWith', 'Please fill out Username and Password.');
   });
 
   it('test signup form rejects when password is empty', () => {
-    let alert = '';
-    cy.on('window:alert', (message) => {
-      alert = message;
-    });
-
-    signupPage.fillUsername(`testuser_${Date.now()}`);
+    cy.window().then((win) => cy.stub(win, 'alert').as('alert'));
+    signupPage.fillUsername(`testuser_s${Date.now()}`);
     signupPage.submitForm();
-
-    cy.wait(1500).then(() => {
-      expect(alert).to.equal('Please fill out Username and Password.');
-    });
+    cy.get('@alert').should('have.been.calledWith', 'Please fill out Username and Password.');
   });
 });

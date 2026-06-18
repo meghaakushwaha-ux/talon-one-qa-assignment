@@ -28,17 +28,18 @@ describe('Login', () => {
   });
 
   it('test error is shown for wrong password', () => {
-    let alertMessage = '';
-    cy.on('window:alert', (message) => {
-      alertMessage = message;
-    });
-
+    cy.window().then((win) => cy.stub(win, 'alert').as('alert'));
     loginPage.fillUsername(validUsername);
     loginPage.fillPassword('wrongpassword');
     loginPage.submitForm();
+    cy.get('@alert').should('have.been.calledWith', 'Wrong password.');
+  });
 
-    cy.wait(2000).then(() => {
-      expect(alertMessage).to.equal('Wrong password.');
-    });
+  it('test error is shown for a non-existent user', () => {
+    cy.window().then((win) => cy.stub(win, 'alert').as('alert'));
+    loginPage.fillUsername('nonexistentuser_xyz_987');
+    loginPage.fillPassword(testData.password);
+    loginPage.submitForm();
+    cy.get('@alert').should('have.been.calledWith', 'User does not exist.');
   });
 });
